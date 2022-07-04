@@ -24,7 +24,7 @@ const LessonLayout = ({ lessons, content, frontMatter }) => {
               <div
                 key={l.slug}
                 className={`p-3 transition ease-in-out duration-200 ${
-                  active ? 'bg-green-600 text-white font-bold' : 'hover:text-green-600'
+                  active ? 'bg-secondary text-white font-bold' : 'hover:text-secondary'
                 }`}
               >
                 <Link href={href}>
@@ -55,7 +55,7 @@ const LessonLayout = ({ lessons, content, frontMatter }) => {
                 <a>
                   <button
                     type="button"
-                    className="h-12 text-base ring-2 ring-green-400 px-4 py-2 rounded bg-green-600 text-white"
+                    className="h-12 text-base px-4 py-2 rounded bg-primary text-white"
                   >
                     INDIETRO
                   </button>
@@ -69,7 +69,7 @@ const LessonLayout = ({ lessons, content, frontMatter }) => {
                 <a>
                   <button
                     type="button"
-                    className="h-12 text-base ring-2 ring-green-400 px-4 py-2 rounded bg-green-600 text-white"
+                    className="h-12 text-base px-4 py-2 rounded bg-primary text-white"
                   >
                     AVANTI
                   </button>

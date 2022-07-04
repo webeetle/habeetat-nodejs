@@ -11,16 +11,21 @@ const Home = ({ lessons }) => (
         <h1 className="text-4xl my-2">{config.course}</h1>
         <p className="text-lg font-thin">{config.courseDescription}</p>
       </div>
-      <div>
-        <h2 className="text-2xl mb-3">Lezioni 💊</h2>
-        <div className="pl-3">
-          {lessons.map((lesson, i) => (
-            <div key={lesson.slug} className="my-2">
-              <Link href={`/lesson/${lesson.slug}`}>
-                <a className="text-lg">{`${i + 1}. ${lesson.title}`}</a>
-              </Link>
-            </div>
-          ))}
+      <div className="grid grid-cols-2">
+        <div>
+          <h2 className="text-3xl mb-3">Lezioni 💊</h2>
+          <div className="pl-3">
+            {lessons.map((lesson, i) => (
+              <div key={lesson.slug} className="my-2">
+                <Link href={`/lesson/${lesson.slug}`}>
+                  <a className="text-lg">{`${i + 1}. ${lesson.title}`}</a>
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div>
+          <img alt="Habeetat Student" src="/images/student.png" />
         </div>
       </div>
     </div>
