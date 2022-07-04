@@ -626,7 +626,6 @@ Questo comando ci farà una serie di domande. Possiamo premere Invio per ogni do
 
 Molto spesso tutte le domande di default vanno bene. Invece di premere il tasto Invio per ogni domanda, possiamo eseguire `npm init -y` per creare immediatamente un file `package.json`, basato sui valori predefiniti. Al termine, dovremmo avere un file `package.json` che assomiglia al seguente:
 
-[source,json]
 ```
 {
   "name": "beetle-string-utils",
@@ -784,7 +783,6 @@ $ npm install --save-dev standard
 
 `standard` è un linter di JavaScript che applica un set di regole non configurabile. La premessa di questo approccio è che dovremmo smettere di usare tempo prezioso sulla sintassi. Ora se diamo nuovamente uno sguardo alla fine del nostro `package.json`:
 
-[source,json]
 ```
 {
   "name": "beetle-string-utils",
@@ -823,7 +821,6 @@ Quando il nostro modulo è verrà installato come sotto dipendenza di un altro m
 
 Il nostro file `package.json` ha attualmente una proprietà scripts simile a questa:
 
-[source,json]
 ```
 "script": {
   "test": "echo \" Errore: nessun test specificato \" && exit 1"
@@ -832,7 +829,6 @@ Il nostro file `package.json` ha attualmente una proprietà scripts simile a que
 
 Modifichiamo il file `package.json` e aggiungiamo un altro campo, chiamato `lint`, nel seguente modo:
 
-[source,json]
 ```
 "script": {
   "test": "echo \" Errore: nessun test specificato \" && exit 1",
@@ -849,7 +845,6 @@ $ npm run lint
 
 Quando eseguiamo uno script npm, la cartella `node_modules/.bin` della directory corrente viene aggiunta alla variabile d'ambiente PATH del contesto di esecuzione. Ciò significa che, anche se non abbiamo l'eseguibile standard nel nostro PATH di sistema, possiamo fare riferimento ad esso in uno script npm come se fosse nel nostro PATH. Cambiamo quindi campo `scripts.test`, come segue:
 
-[source,json]
 ```
 "script": {
   "test": "npm run lint",
