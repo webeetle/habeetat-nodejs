@@ -2,7 +2,7 @@
   "name": "nodejs-in-pillole",
   "version": "1.0.0",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 8080",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"

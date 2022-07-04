@@ -41,7 +41,7 @@ npm run dev
 yarn dev
 ```
 
-Apri il browser all'indirizzo [http://localhost:3000](http://localhost:3000) per vedere il risultato.
+Apri il browser all'indirizzo [http://localhost:8080](http://localhost:8080) per vedere il risultato.
 
 Puoi iniziare a modificare la pagina modificando `pages/index.js`. La pagina si aggiorna automaticamente mentre modifichi il file.
 Tutti gli argomenti trattati e suddivisi per lezione puoi trovarli nella directory `lessons` in formato Markdown.
