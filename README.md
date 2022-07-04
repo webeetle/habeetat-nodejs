@@ -50,3 +50,7 @@ Tutti gli argomenti trattati e suddivisi per lezione puoi trovarli nella directo
 
 * Event Loop
 * Testing (Assert, tapjs, jest)
+
+## Licenza
+
+[Creative Commons Legal Code](./LICENSE).
