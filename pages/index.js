@@ -18,7 +18,7 @@ const Home = ({ lessons }) => (
             {lessons.map((lesson, i) => (
               <div key={lesson.slug} className="my-2">
                 <Link href={`/lesson/${lesson.slug}`}>
-                  <a className="text-lg">{`${i + 1}. ${lesson.title}`}</a>
+                  <a className="text-lg">{lesson.title.includes('Appendice') ? `${lesson.title}` : `${i + 1}. ${lesson.title}`}</a>
                 </Link>
               </div>
             ))}

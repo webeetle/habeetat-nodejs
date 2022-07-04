@@ -1,0 +1,2114 @@
+---
+title: Appendice A - JavaScript
+---
+
+Se state leggendo questo libro, è probabile che avete già avuto a che fare con JavaScript. Per esempio è probabile che abbiate creato qualche pagina web che utilizza HTML, CSS e JavaScript utilizzando quest'ultimo per creare delle pagine più dinamiche e interattive, manipolando il _Document Object Model_ (DOM) del browser. O meglio ancora avete utilizzato Bootstrap, librerie come React.js o framework più strutturati come Angular e Vue.js. JavaScript è il linguaggio più conosciuto al mondo che ha aderito allo standard ECMAScript  creato alla fine degli anni '90. Questa adesione ne guida lo sviluppo e ogni anno l'API standard di JavaScript viene arricchita con nuove funzionalità. Fortunatamente i browser moderni supportano lo standard ECMAScript, che rende il linguaggio stesso molto più flessibile e sicuramente leggibile, rispetto a qualche anno fa quando le incompatibilità tra i browser erano una piaga per qualsiasi sviluppatore Web.
+
+Questo sezione non intende essere esaustiva su tutte le funzionalità di JavaScript, ma solo un'introduzione ad alcune delle funzionalità supportate in Node.js, in modo da poter comprendere facilmente tutti gli esempi di codice nel resto del libro, o anche per un ripasso se siete arruginiti con JavaScript.
+
+In particolare analizzeremo:
+
+- Variabili
+- Funzioni
+- Array
+- Oggetti
+- Classi, prototipi ed ereditarietà
+
+
+## Variabili
+
+In JavaScript una variabile può essere dichiarata con la parola chiave *`var`*. Quando dichiariamo una variabile utilizzando questa parola chiave all'interno di uno script (per esempio *`var`* `tesla = 'MODEL S'`), questa sarà visibile in tutto lo script, anche se viene richiamata all'interno di una funzione. Al contrario, se un variabile di questo tipo viene dichiarata all'interno di una funzione all'interno di uno script, questa sarà visibile solo all'interno di quella funzione e non all'esterno. Vediamo come funziona con un semplice esempio:
+
+```
+var tesla = 'MODEL S'
+
+function printModels() {
+  var f8 = 'F8 Tributo'
+
+  if (f8 === 'F8 Tributo') {
+    var monza = 'Monza SP2'
+  }
+
+  console.log(f8) // F8 Tributo
+  console.log(tesla) // MODEL S
+  console.log(monza) // Monza SP2
+}
+
+console.log(tesla) // MODEL S
+printModels()
+```
+
+Se eseguiamo il codice appena mostrato il risultato che otterrete sarà il seguente:
+
+```
+F8 Tributo
+MODEL S
+Monza SP2
+MODEL S
+```
+
+Questo è solo un semplice esempio a titolo dimostrativo, ma ci è utile per notare due cose:
+
+- la variabile `tesla` è visibile all'interno e all'esterno della funzione `printModels`;
+- la variabile `monza` è visibile all'esterno del blocco `if`.
+
+Per chi proviene da altri linguaggi di programmazione questo comportamento può sembrare anomalo in quanto si aspettano che la variabile che le due condizioni sopra elencate non si verifichino. Per questo motivo dalla sesta edizione dello standard ECMAScript (ES2015), sono state introdotte due nuove parole chiave per dichiarare variabili, `let` e `const`, che consentono di dichiarare variabili che sono visibili, e quindi utilizzabili, solo ed esclusivamente all'interno di un blocco di codice. Le variabili così definite prendono il nome di variabili _block scoped_.
+
+
+### La parola chiave let
+
+Con la parola chiave *`let`* è possibile dichiarare una variabile che è valida solo all'interno di un blocco di codice. Per chiarirne meglio il funzionamento proviamo a sostituire nello script mostrato in precedenza la parola chiave `let` al posto di `var`, e vediamo cosa succede:
+
+```
+let tesla = 'MODEL S'
+
+function printModels() {
+  let f8 = 'F8 Tributo'
+
+  if (f8 === 'F8 Tributo') {
+    let monza = 'Monza SP2'
+  }
+
+  console.log(f8) // F8 Tributo
+  console.log(tesla) // MODEL S
+  console.log(monza) // Reference Error
+}
+
+console.log(tesla) // MODEL S
+printModels()
+```
+
+Se proviamo ad eseguire questo script, il risultato che otterrete a video sarà qualcosa tipo:
+
+```
+MODEL S
+F8 Tributo
+MODEL S
+
+console.log(monza) // Monza SP2
+            ^
+ReferenceError: monza is not defined
+```
+
+Dopo aver effettuato la sostituzione, lo script non restituisce più lo stesso risultato ottenuto in precedenza. Questo perché la variabile `monza` risulta accessibile solo ed esclusivamente all'interno del blocco `if`. Un'altra differenza sostanziale tra `var` e `let` è che con `var` è possibile ridichiarare le variabili con lo stesso nome, mentre con `let` questo non è possibile. A titolo di esempio prendiamo il seguente frammento di codice:
+
+
+```
+var tesla = 'MODEL S'
+var tesla = 'MODEL 3'
+
+console.log(tesla)
+```
+
+Lo script in questo caso non andrà in errore anzi stamperà il seguente risultato:
+
+
+```
+MODEL 3
+```
+
+Adesso sostituiamo la parola chiave `var` con `let`, quindi:
+
+
+```
+let tesla = 'MODEL S'
+let tesla = 'MODEL 3'
+
+console.log(tesla)
+```
+
+Riceveremo un errore del genere:
+
+
+```
+SyntaxError: Identifier 'tesla' has already been declared
+```
+
+Da ciò si evince facilmente che se si dichiara una variabile con la parola chiave `let` e, all'interno dello stesso blocco di codice, si dichiara un'altra variabile con la stessa parola chiave e lo stesso nome, al contrario di quanto visto con la parola chiave `var` si riceverà un `SyntaxError`.
+
+### La parola chiave const
+
+La parola chiave *`const`* è utile quando vogliamo dichiarare una variabile in sola lettura, una costante, all'interno del nostro script. Proviamo subito con un esempio:
+
+
+```
+const tesla = 'MODEL S'
+tesla = 'MODEL 3'
+
+console.log(tesla)
+```
+
+Eseguendo questo script il risultato sarà il seguente:
+
+
+```
+tesla = 'MODEL 3'
+      ^
+
+TypeError: Assignment to constant variable.
+```
+
+Questo accade perché, a differenza delle variabili dichiarate con `let`, questo tipo di variabili una volta inizializzate non è più possibile modificarne il contenuto.
+
+Le regole di visibilità di questo tipo di variabili sono le stesse che abbiamo descritto per le variabili dichiarate con `let`, quindi anche queste sono _block scoped_, ossia variabili che sono visibili solo all'interno di un determinato blocco di codice. Riprendendo l'esempio descritto nel precedente paragrafo e sostituendo la parola chiave `const` al posto di `let`:
+
+
+```
+const tesla = 'MODEL S'
+
+function printModels() {
+  const f8 = 'F8 Tributo'
+
+  if (f8 === 'F8 Tributo') {
+    const monza = 'Monza SP2'
+  }
+
+  console.log(f8)
+  console.log(monza)
+}
+
+console.log(tesla)
+printModels()
+```
+
+Eseguendolo l'output sarà esattamente lo stesso ottenuto in precedenza, quindi:
+
+```
+MODEL S
+F8 Tributo
+ReferenceError: monza is not defined
+```
+
+## Variabili primitive
+
+JavaScript possiede solo sette tipi di variabili primitive:
+
+- *String*
+- *Number*
+- *BigInt*
+- *Boolean*
+- *Symbol*
+- *null*
+- *undefined*
+
+### String
+
+In JavaScript le stringhe sono sequenze di caratteri con cui è possibile rappresentare la maggior parte dei caratteri del mondo. Non esiste il tipo `char` o altro per rappresentare il singolo carattere: l'unico modo per farlo è quello di dichiarare una stringa con lunghezza pari a uno. Le stringhe possono essere racchiuse tra apici singoli, doppi o accento grave (backtick). Le stringhe racchiuse con i backticks sono stringhe template, possono essere multiriga e supportano anche l'interpolazione.
+
+#### Lunghezza di una stringa
+
+Per ottenere la lunghezze di una stringa, possiamo utilizzare la proprietà `length`:
+
+```
+> let hello = 'Hello, Node.js!'
+undefined
+> hello.length
+15
+> 'Hello, Node.js!'.length
+15
+```
+
+Se proviamo a leggere la proprietà `length` su una stringa `null` o `undefined` otterremo il seguente errore: 
+
+
+```
+> hello = null
+null
+> hello.length
+Uncaught TypeError: Cannot read property 'length' of null
+```
+
+#### Concatenare le stringhe
+
+Per concatenare due stringhe è possibile utilizzare l'operatore `+` o un template utilizzando i backticks:
+
+```
+> 'Hello' + ', ' + 'Node.js!'
+'Hello, Node.js!'
+
+> const hello = 'Hello', node = 'Node.js'
+undefined
+> `${hello}, ${node}!`
+'Hello, Node.js!'
+```
+
+#### concat
+
+In JavaScript esistono molte funzioni per la manipolazione delle stringhe Per esempio è possibile concatenare due o più stringhe anche con la funzione `concat`, in aggiunta alle metodologie viste nel paragrafo precedente:
+
+```
+> const hello = 'Hello, ', node = 'Node.js!'
+undefined
+> `${hello} ${node}`
+'Hello, Node.js!'
+```
+
+#### includes e indexOf
+
+Per controllare se una stringa è contenuta un un'altra è possibile utilizzare la funzione `indexOf` o `includes`:
+
+```
+> 'Hello, Node.js!'.includes('Node')
+true
+
+> 'Hello, Node.js!'.indexOf('Node')
+7
+```
+
+Noterete una differenza sostanziale fra le due. In pratica la funzione `includes` restituisce `true` se trova l'occorrenza che stiamo cercando all'interno della stringa, mentre `indexOf` ritorna la posizione del primo carattere dell'occorrenza che ha trovato, ossia `7`. Se invece nessuna occorrenza viene trovata all'interna della stringa allora `includes` restituirà `false` mentre `indexOf` restituirà `-1`:
+
+
+```
+> 'Hello, Node.js!'.includes('pippo')
+false
+
+> 'Hello, Node.js!'.indexOf('pippo')
+-1
+```
+
+#### substr e splice
+
+Per estrare una porzione da una stringa, è possibile utilizzare la funzione `substr` o `splice`. La differenza sostanziale fra queste due funzioni è che la prima accetta come parametri la posizione del primo carattere e come secondo parametro il numero di caratteri da estrarre, mentre la seconda come secondo parametro vuole pa posizione dell'ultimo carattere da estrarre. Quindi se vogliamo estrarre la sottostringa `Node` da `Hello, Node.js!`:
+
+
+```
+> 'Hello, Node.js!'.substr(7, 4)
+'Node'
+
+> 'Hello, Node.js!'.slice(7, 11)
+'Node'
+```
+
+#### charAt
+
+Se desideriamo estrarre un carattere da una stringa basta utilizzare le parentesi quadre e l'indice del carattere della stringa che vogliamo estrarre, per esempio `hello[2]`. Anche se non avete mai avuto esperienza con JavaScript troverete sicuramente familiare questa notazione. Un'altro modo per estrarre un carattere da una stringa è quella di utilizzare la funzione `charAt`:
+
+```
+> const hello = 'Hello, World!'
+undefined
+> hello[2]
+'l'
+
+> hello.charAt(2)
+'l'
+```
+
+#### split
+
+Se abbiamo la necessita di trasformare una stringa in un array di sottostringhe possiamo utilizzare la funzione `split`. Questa funzione accetta un parametro in input che rappresenta il separatore che vogliamo utilizzare per suddividere la nostra stringa. Se viene utilizzata una stringa vuota come parametro `('')`, allora gli elementi dell'array risultate saranno i singoli caratteri della stringa. Diamo uno sguardo al suo funzionamento:
+
+
+```
+> const hello = 'Hello, World!', hello_ = 'H_e_l_l_o_W_o_r_l_d_!'
+undefined
+> hello.split('')
+[
+  'H', 'e', 'l', 'l',
+  'o', ',', ' ', 'W',
+  'o', 'r', 'l', 'd',
+  '!'
+]
+
+> hello.split(', ')
+[ 'Hello', 'World!' ]
+
+> hello_.split('_')
+[
+  'H', 'e', 'l', 'l',
+  'o', 'W', 'o', 'r',
+  'l', 'd', '!'
+]
+```
+
+### Number
+
+In JavaScript tutti i numeri sono in formato 64-bit secondo lo [standard IEEE 754](https://it.wikipedia.org/wiki/IEEE_754). Il tipo primitivo `Number` è un oggetto che viene utilizzato per rapprentare numeri come `10` o `-7.92` e così via. Quindi con `Number` possiamo rappresentare numeri interi, float, esadecimali, ottali o numeri esponenziali. La funzione `Number` inoltre può convertire una stringa in un numero e, nel caso in cui la stringa non è un numero valido ritorna il valore `NaN`.
+
+```
+> Number('236')
+236
+> Number('236.23')
+236.23
+> Number('pippo')
+NaN
+> Number(undefined)
+NaN
+> Number(null)
+0
+```
+
+Una cosa a cui prestare molta attenzione quando lavorate con in numeri in JavaScript è che per molti valori vengono approssimati. Per esempio:
+
+```
+> 1.1 + 1.3
+2.4000000000000004
+```
+
+di conseguenza se provate ad effettuare determinati controlli il risultato che otterrete potrebbe non essere quello atteso:
+
+```
+> 1.1 + 1.3 === 2.4
+false
+```
+
+#### Costanti
+
+*Number* possiede alcune proprietà statiche che possiamo utilizzare per effettuare confronti o operazioni:
+
+```
+> Number.MAX_VALUE
+1.7976931348623157e+308
+> Number.MIN_VALUE
+5e-324
+```
+
+```
+> Number.NEGATIVE_INFINITY
+-Infinity
+> Number.POSITIVE_INFINITY
+Infinity
+```
+
+```
+> Number.MAX_SAFE_INTEGER
+9007199254740991
+> Number.MIN_SAFE_INTEGER
+-9007199254740991
+```
+
+```
+> Number.EPSILON
+2.220446049250313e-16
+> (0.1 + 0.2) - 0.3 < Number.EPSILON
+true
+```
+
+```
+> Number.NaN
+NaN
+```
+
+#### parseInt e parseFloat
+
+Se abbiamo la necessità di trasformare una stringa in un numero intero o float, possiamo utilizzare le funzioni `parseInt` e `parseFloat`. Queste funzioni accettano una stringa come parametro in input e nel caso in cui la stringa passata non è un numero valido, restituiscono il valore `NaN`:
+
+```
+> Number.parseInt('33')
+33
+> Number.parseInt('33.33')
+33
+> Number.parseInt('')
+NaN
+> Number.parseInt('pippo')
+NaN
+> Number.parseInt(null)
+NaN
+> Number.parseInt(undefined)
+NaN
+```
+
+```
+> Number.parseFloat('323.22')
+323.22
+> Number.parseFloat('pippo')
+NaN
+> Number.parseFloat('')
+NaN
+> Number.parseFloat(null)
+NaN
+> Number.parseFloat(undefined)
+NaN
+```
+
+Nel caso in cui la stringa data in input inizia con un valore numerico e successivamente una serie di caratteri non validi, le funzioni valutano solo la parte numerica. Vediamo come funziona con degli esempi:
+
+```
+> Number.parseInt('123pippo')
+123
+> Number.parseInt('123.83pippo')
+123
+> Number.parseInt('pi123ppo')
+NaN
+> Number.parseInt('pippo123')
+NaN
+```
+
+```
+> Number.parseFloat('123.83pippo')
+123.83
+> Number.parseFloat('123pippo')
+123
+> Number.parseFloat('pi123.22ppo')
+NaN
+> Number.parseFloat('pippo123.22')
+NaN
+```
+
+#### isFinite
+
+JavaScript è leggermente diverso dagli altri linguaggi, infatti se provate a dividere un numero per zero non si ottiene un errore a runtine bensì il valore `Infinity` o `-Infinity`:
+
+
+```
+> 22 / 0
+Infinity
+> - 22 / 0
+-Infinity
+```
+
+Per verificare se un numero è intero e finito, e quindi diverso da `Infinity`, `-Infinity` o `NaN`, è possibile utilizzare la funzione `Number.isFinite`. Questa funzione restituisce `true` o `false`:
+
+```
+> Number.isFinite(22/0)
+false
+> Number.isFinite(-22/0)
+false
+> Number.isFinite('pippo')
+false
+> Number.isFinite(22/2)
+true
+```
+
+#### isInteger
+
+Il metodo `Number.isInteger` prende in input un parametro e restituisce `true` se il parametro in input è un numero intero, `false` altrimenti.
+
+```
+> Number.isInteger(42)
+true
+> Number.isInteger('342')
+false
+> Number.isInteger('pippo')
+false
+> Number.isInteger(42.3)
+false
+> Number.isInteger(null)
+false
+> Number.isInteger(undefined)
+false
+```
+
+#### toFixed
+
+Questa funzione viene utilizzata per troncare numeri a virgola fissa. Prende in input un numero intero `n` e restituisce una stringa, che rappresenta il numero troncato alla posizione `n` dopo la virgola arrotondando per eccesso. Nel caso in cui viene invocato su un numero intero, questo verrà rappresentato con `n` zeri dopo la virgola.
+
+```
+> const float = 123.456789, integer = 123, nullElement = null, undefinedElement = undefined, string = 'pippo'
+undefined
+> float.toFixed(3)
+'123.457'
+> integer.toFixed(3)
+'123.000'
+> nullElement.toFixed(3)
+Uncaught TypeError: Cannot read property 'toFixed' of null
+> undefinedElement.toFixed(3)
+Uncaught TypeError: Cannot read property 'toFixed' of undefined
+> string.toFixed(3)
+Uncaught TypeError: string.toFixed is not a function
+```
+
+#### isNaN
+
+la funzione `Number.isNaN` è utile per verificare se un valore passatogli in input è di tipo `NaN` (_Not a Number_):
+
+```
+> Number.isNaN(342)
+false
+> Number.isNaN(NaN)
+true
+> Number.isNaN('342')
+false
+> Number.isNaN('pippo')
+false
+```
+
+Bisogna fare molta attenzione in questo caso a non confondere `Number.isNaN` con la funzione globale `isNaN` in quanto hanno comportamenti molto diversi. Infatti provando a rifare gli stessi esempi riportati in precedenza, i risultati cambiano:
+
+```
+> isNaN(342)
+false
+> isNaN(NaN)
+true
+> isNaN('342')
+false
+> isNaN('pippo')
+true
+```
+
+La differenza sostanziale tra le due funzioni e che `Number.isNaN` verifica se il valore passato in input è di tipo `NaN`, mentre la funzione globale `isNaN` è in grado capire se il parametro dato in input possa rappresentare un numero o meno.
+
+### Boolean
+
+Questa tipologia di variabile è molto semplice da utilizzare in JavaScript. Uno specifico valore può essere `true` o `false` e potete convertire qualsiasi valore in `boolean` utilizzando la funzione `Boolean`:
+
+```
+> Boolean('pippo')
+true
+> Boolean(22)
+true
+> Boolean(1)
+true
+> Boolean(-1)
+true
+> Boolean(true)
+true
+> Boolean('')
+false
+> Boolean(false)
+false
+> Boolean(0)
+false
+> Boolean(null)
+false
+> Boolean(undefined)
+false
+> Boolean(NaN)
+false
+```
+
+Non avrete quasi mai bisogno di questa funzione in quanto è lo stesso JavaScript ad effettuare questa conversione quando è necessario, in base a due regole fondamentali:
+
+- stringa vuota(`''`), `false`, `0`, `undefined`, `null`, `undefined` e `NaN` avranno tutti il valore `false`;
+- tutti gli altri valori prendono il valore `true`.
+
+### BigInt
+
+`BigInt` è una primitiva numerica in JavaScript che può rappresentare numeri interi con precisione arbitraria. Con `BigInt` è possibile effettuare operazioni su numeri interi di grandi che vanno oltre il limite di numeri interi come `Number`:
+
+
+```
+> BigInt(123)
+123n
+> 123n === BigInt(123)
+true
+> BigInt(12.3)
+Uncaught:
+RangeError: The number 12.3 cannot be converted to a BigInt because it is not an integer
+  at BigInt (<anonymous>)
+> BigInt('12.3')
+Uncaught SyntaxError: Cannot convert 12.3 to a BigInt
+```
+
+### Symbol
+
+`Symbol` è un tipo di variabile molto particolare. È stato introdotto solo nel 2015, quindi solo pochi anni fa, ed è stato da subito dichiarato come un dato primitivo, quindi come `string`, `boolean` ecc. La particolarità di una variabile di tipo `Symbol` è che una volta creata, il suo valore viene mantenuto privato e per uso interno. Tutto ciò che rimane dopo la creazione di una variabile di questo tipo è un riferimento unico a `Symbol`. Per creare una variabile di questo tipo basta richiamare la funzione `Symbol()` con un parametro opzionale di tipo stringa che rappresenta la descrizione, per esempio:
+
+```
+> const symbol1 = Symbol(), symbol2 = Symbol('name'), symbol3 = Symbol('name')
+undefined
+```
+
+Come già accennato, ogni volta che creiamo una variabile di questo tipo, otteniamo un riferimento unico, di conseguenza ogni variabile è diversa dall'altra:
+
+```
+> symbol2 === symbol3
+false
+```
+
+Molto spesso questa tipologia di variabili viene utilizzata per definire le proprietà di un oggetto, al fine di evitare conflitti tra i nomi delle proprietà dell'oggetto:
+
+```
+> .editor
+// Entering editor mode (Ctrl+D to finish, Ctrl+C to cancel)
+const NAME = Symbol('name')
+const student = {
+  [NAME]: 'Davide'
+}
+
+student[NAME]
+
+// CTRL+D
+'Davide'
+```
+
+### null e undefined
+
+Il tipo di dati primitivo `null` viene solitamente utilizzato per definire una variabile che non ha dati, a differenza di `undefined` che viene utilizzata per definire l'assenza di un valore definito. Infatti: 
+
+* tutte le variabili che sono state dichiarate senza un valore saranno di tipo `undefined`;
+* tutte le espressioni che tentano di accedere ad una proprietà non definita su un oggetto sarà `undefined`;
+* tutte le funzioni che non hanno un istruzione `return`, ritornano `undefined`.
+
+## Oggetti
+
+Tutto ciò che in JavaScript non è un tipo primitivo è un oggetto. Un oggetto altro non è che un insieme di coppie chiavi valori (`key: value`), dove i valori possono essere a loro volta oggetti, variabili primitive o funzioni. Se un oggetto ha più coppie chiave valore, queste devono essere separate da una virgola `,`. È possibile dichiarare un oggetto in due modi, il primo è quello di utilizzare il costruttore `Object` ed il secondo è quello di dichiarare una variabile in cui le coppie chiave valore vengono racchiuse da `{}`. Vediamo come fare con un piccolo esempio:
+
+```
+const student = {
+  name: 'Davide',
+  number: '123456'
+}
+
+const classroom = new Object({
+  name: 'Computer Science I',
+  teacher: 'Dennis Ritchie'
+})
+
+console.log(student)
+console.log(classroom)
+```
+
+Eseguendo questo script il risultato che otterremo sarà il seguente:
+
+[source,json]
+```
+{ name: 'Davide', number: '123456' }
+{ name: 'Computer Science I', teacher: 'Dennis Ritchie' }
+```
+
+È possibile accedere ad una proprietà di un oggetto utilizzando il punto `.`:
+
+
+```
+const student = {
+  name: 'Davide',
+  number: '123456'
+}
+
+const classroom = new Object({
+  name: 'Computer Science I',
+  teacher: 'Dennis Ritchie'
+})
+
+console.log(`Student: ${student.name}`)
+console.log(`Teacher: ${classroom.teacher}`)
+```
+
+eseguendo questo script il risultato che otterremo sarà:
+
+```
+Student: Davide
+Teacher: Dennis Ritchie
+```
+
+> La parola chiave *`const`* rende una variabile non modificabile, non il contenuto assegnatogli. Quando il contenuto di una variabile di questo tipo è un oggetto, significa che l'oggetto stesso può ancora essere modificato. Pertanto, è possibile modificare il contenuto dell'oggetto dichiarato con variabile `const`, ma non è possibile assegnare un nuovo oggetto a una variabile `const`.
+
+### Definire le proprietà di un oggetto
+
+Esistono diversi modi per definire le proprietà di un oggetto in JavaScript. Il primo è quello di specificare il nome dell'oggetto seguito da: un punto, il nome della nuova proprietà, un segno di uguale e il valore della nuova proprietà:
+
+```
+const student = {
+  name: 'Davide',
+  number: '123456'
+}
+
+student.birthday = '4th July'
+
+console.log(student)
+```
+
+questo script stamperà a video 
+
+```
+{ name: 'Davide', number: '123456', birthday: '4th July' }
+```
+
+#### Object.assign
+
+Combinare le proprietà tra due oggetti è una prassi comune. Farlo proprietà per proprietà però non solo è limitativo, ma anche noioso. La funzione statica `Object.assign` ci aiuta a farlo con poche linee di codice. Vediamo come funziona con un piccolo esempio:
+
+```
+const obj = {}
+const student = {
+  name: 'Davide',
+  number: '123456'
+}
+
+Object.assign(obj, student, {
+  birthday: '4th July'
+})
+
+console.log(obj)
+```
+
+eseguendo lo script dalla riga di comando otterremo il seguente risultato:
+
+```
+{ name: 'Davide', number: '123456', birthday: '4th July' }
+```
+
+La funzione itera tutte le proprietà degli oggetti passati in input, partendo dall'ultimo, e li assegna all'oggetto dato in input in precedenza. Quindi nell'esempio appena descritto la proprietà `birthday` viene assegnata all'oggetto `student` e le proprietà dell'oggetto `student` a loro volta vengono assegnate ad `obj`. Se la proprietà che stiamo assegnando esiste nell'oggetto più a sinistra passato come parametro, questa verrà sovrascritta con quella nuova. Modificando lo script nel modo seguente:
+
+
+```
+const obj = {
+  birthday: '2nd July'
+}
+
+const student = {
+  name: 'Davide',
+  number: '123456',
+  birthday: '3rd July'
+}
+
+Object.assign(obj, student, {
+  birthday: '4th July'
+})
+
+console.log(obj)
+```
+
+Tenendo conto di quanto detto in precedenza, non c'è da meravigliarsi se il risultato che otterremo eseguendo questo script sarà lo stesso di quello ottenuto nel precedente esempio:
+
+
+```
+{ name: 'Davide', number: '123456', birthday: '4th July' }
+```
+
+#### Object.defineProperty
+
+La funzione statica `Object.defineProperty` ci consente di definire non solo il nome della proprietà ed eventualmente il suo valore, bensì ci fornisce una serie di opzioni che possono essere utili sulla proprietà che stiamo andando a definire. In particolare la funzione prende in input tre parametri:
+
+1. L'oggetto a cui si vuole aggiungere una proprietà.
+2. Il nome della proprietà.
+3. Un'oggetto le cui proprietà descrivono sia i dati che le modalità di accesso alla proprietà. Vediamo quali sono:
+  - `configurable`: se impostata a `true` la proprietà può essere eliminata o modificata. Il suo valore di default è `false`
+  - `enumerable`: se impostata a `true` la proprietà sarà visibile durante l'enumerazione delle proprietà sull'oggetto (per esempio `for..in` o `Object.keys()`). Il suo valore di default è `false`.
+  - `value`: il valore che vogliamo assegnare alla proprietà. Il suo valore di default è `undefined`.
+  - `writable`: se impostata a `true` la proprietà può essere sovrascritta. Il suo valore di default è `false`.
+  - `get`: una funzione che rappresenta il metodo che ritorna il valore della proprietà aggiunta. Il suo valore di default è `undefined`.
+  - `set`: una funzione che rappresenta il metodo che imposta il valore della proprietà aggiunta. Il suo valore di default è `undefined`.
+
+Vediamo come utilizzare questa funzione con qualche esempio pratico. Definiamo una nuova proprietà `birthday` sul nostro oggetto `student`. Questa proprietà sarà solo leggibile una volta definita e non sarà modificabile quindi, oltre a dare un valore iniziale alla proprità `value`, impostiamo anche la proprietà `writable` a `false`:
+
+
+```
+const student = {
+  name: 'Davide',
+  number: '123456'
+}
+
+Object.defineProperty(student, 'birthday', {
+  writable: false,
+  value: '4th July'
+})
+
+console.log(student) // [1]
+console.log(student.birthday) // [2]
+
+// [3]
+student.birthday = 'Another date'
+console.log(student.birthday)
+```
+
+eseguendo lo script otterrete un'errore in fase di esecuzione:
+
+
+```
+{ name: 'Davide', number: '123456' }
+4th July
+student.birthday = 'Another date'
+                 ^
+TypeError: Cannot assign to read only property 'birthday' of object '#<Object>'
+```
+
+Analizziamo i tre punti evidenziati nello script: 
+
+1. Non avendo definito la proprietà `enumerable` questa avrà il valore di default a `false`, di conseguenza quando proviamo a stampare l'intero oggetto a video con `console.log`, la proprietà `birthday` ed il suo relativo valore non verranno visualizzate. 
+2. Il secondo `console.log` stamperà correttamente a video il valore della proprietà `birthday`.
+3. Avendo impostato il valore dell'opzione `writable` a `false`, la proprietà `birthday` non potrà essere sovrascritta di conseguenza otterremo un errore in fase di esecuzione.
+
+Vediamo come cambia il comportamento del punto `1` e del punto `3`, effettuando qualche modifica al nostro codice:
+
+```
+...
+Object.defineProperty(student, 'birthday', {
+  writable: true,
+  enumerable: true,
+  value: '4th July'
+})
+...
+```
+
+Avendo impostato la proprietà `writable` a `true`, e avendo specificato la proprietà `enumerable` a `true`, lo script non terminerà con un errore e verrà visualizzata anche la proprietà `birthday` che in precedenza non era visibile:
+
+```
+{ name: 'Davide', number: '123456', birthday: '4th July' }
+4th July
+Another date
+```
+
+In JavaScript è possibile eliminare la proprietà di un oggetto utilizzando `delete`. Prendendo in considerazione sempre l'oggetto `student`, proviamo ad eliminare la proprietà `birthday` definita in precedenza. Aggiungiamo queste due righe alla fine del nostro script:
+
+
+```
+...
+Object.defineProperty(student, 'birthday', {
+  writable: true,
+  enumerable: true,
+  value: '4th July'
+})
+
+...
+
+delete student.birthday
+console.log(student)
+```
+
+Se eseguiamo questo script dalla riga di comando otterremo il seguente errore in fase di esecuzione:
+
+```
+{ name: 'Davide', number: '123456', birthday: '4th July' }
+4th July
+Another date
+delete student.birthday
+^
+
+TypeError: Cannot delete property 'birthday' of #<Object>
+```
+
+Otteniamo questo errore in quanto il parametro `configurable` è impostato di default a `false`. Questo significa che non è possibile eliminare la proprietà `birthday` dal nostro oggetto. Se proviamo ad impostarlo a `true` nel modo seguente:
+
+```
+...
+Object.defineProperty(student, 'birthday', {
+  enumerable: true,
+  writable: true,
+  enumerable: true,
+  value: '4th July'
+})
+
+...
+
+delete student.birthday
+console.log(student)
+```
+
+lo script non terminerà più con un errore, anzi i risultati attesi saranno correttamente stampati a video:
+
+```
+{ name: 'Davide', number: '123456', birthday: '4th July' }
+4th July
+Another date
+{ name: 'Davide', number: '123456' }
+```
+
+### Iterare le proprietà di un oggetto
+
+Come visto nella sezione precedente, `Object.assign` è una funzione molto utile per assegnare una nuova proprietà ad un oggetto. Spesso però capita di avere la necessità di effettuare operazioni che si basano sulle proprietà di un oggetto. In questa sezione vedremo come farlo in tre diversi modi.
+
+#### Object.keys
+
+La funzione `Object.keys` ritorna l'elenco delle proprietà definite per un oggetto in un array di stringhe. Vediamo come funziona con un piccolo esempio:
+
+```
+const obj = {
+  foo: 'Foo value',
+  bar: 'Bar value'
+}
+
+for (const prop of Object.keys(obj)) {
+  console.log(prop)
+}
+```
+
+Se eseguiamo lo script, verranno stampate le seguenti righe a video:
+
+```
+foo
+bar
+```
+
+La funzione `Object.keys` ritorna un array i cui valori sono i nomi delle proprietà dell'oggetto. Possiamo iterare questo array con un ciclo `for..of`. La variabile `prop` ad ogni iterazione conterrà il nome della proprietà corrente.
+
+#### Object.entries
+
+Un'altra funzione interessante che JavaScript mette a disposizione è `Object.entries`. A differenza della funzione `Object.keys`, questa funzione ritorna le coppie chiave valore dell'oggetto su cui viene invocato:
+
+```
+const obj = {
+  foo: 'Foo value',
+  bar: 'Bar value'
+}
+
+for (const [prop, value] of Object.entries(obj)) {
+  console.log(`${prop}: ${value}`)
+}
+```
+
+Eseguendo lo script, il risultato che otterremo a video sarà il seguente:
+
+```
+foo: Foo value
+bar: Bar value
+```
+
+La sintassi `[prop, value]` destruttura l'array ricevuto come in due variabili distinte, che rappresentano rispettivamente il nome ed il valore della proprietà, restituita ad ogni ciclo dell'iterazione che stiamo effettuando. In alternativa, possiamo utilizzare una singola variabile, ad esempio `item`, in cui troveremo alla posizione `0` il nome della proprietà e alla posizione `1` il rispettivo valore.
+
+#### Object.getOwnPropertyNames
+
+`Object.getOwnPropertyNames` è una funzione che restituisce un array i cui elementi sono stringhe corrispondenti alle proprietà enumerabili e non dell'oggetto dato in input. Vediamo come funziona con un esempio:
+
+```
+const obj = {
+  foo: 'Foo value',
+  bar: 'Bar value'
+}
+
+Object.defineProperty(obj, 'notEnum', {
+  value: 'Not enumerable var'
+})
+
+console.log(Object.keys(obj))
+console.log(Object.getOwnPropertyNames(obj))
+```
+
+A differenza degli esempi fatti in precedenza con `Object.keys`, la funzione `Object.getOwnPropertyNames` restituisce tutte le proprietà dell'oggetto passatogli in input, comprese quelle non enumerabili. Infatti eseguendo lo script il risultato che otterremo sarà il seguente:
+
+```
+[ 'foo', 'bar' ]
+[ 'foo', 'bar', 'notEnum' ]
+```
+
+La funzione restituisce tutte le proprietà dell'oggetto indipendentemente dal fatto che queste siano enumerabili.
+
+## Funzioni
+
+Le funzioni sono i blocchi principali di un programma. Ci consentono di definire un blocco di codice, con un nome, ed eseguirlo tutte le volte che si vuole. In JavaScript una funzione è un oggetto, e quindi un valore, e come tale viene trattato come qualsiasi altro valore. Infatti, come vedremo più avanti in questo libro, una funzione può essere passata ad un altra funzione come parametro, o restituita da un istruzione `return`. Le funzioni ritornano sempre un valore, se non è specificata un istruzione di `return` allora la funzione restituirà `undefined`.
+
+### Definire una funzione
+
+Esistono diversi modi per dichiarare una funzione in JavaScript. Il primo è quello di utilizzare la parole chiave `function` seguita dal nome che gli si vuole dare.
+
+```
+function sayHello (name) {
+  console.log(`Hello, ${name}`)
+}
+
+console.log(sayHello('Davide')) // Stamperà "Hello, Davide"
+```
+
+È possibile dichiarare una funzione senza specificarne il nome. Questa tipologia di funzione viene chiamata _"anonima"_ ed è possibile assegnarla ad una variabile.
+
+
+```
+const sayHello = function (name) {
+  console.log(`Hello, ${name}`)
+}
+
+console.log(sayHello('Davide')) // Stamperà "Hello, Davide"
+```
+
+### Le arrow function
+
+Un ulteriore modo per dichiarare una funzione è utilizzando l'operatore `=>`. Le funzioni dichiarate con questo tipo di operatore sono chiamate _Arrow Function_ (Funzioni Freccia). Tutte le arrow function sono funzioni anonime. Ecco un piccolo esempio di utilizzo:
+
+
+```
+const square = (number) => {
+  return number * number
+}
+
+const four = square(2)
+console.log(four) // Stamperà "4"
+```
+
+Quando una arrow function contiene una singola linea di codice è possibile utilizzare una sintassi abbreviata, eliminando le parentesi graffe `{}` e l'istruzione `return`:
+
+```
+const square = (number) => number * number
+
+const four = square(2)
+console.log(four) // Stamperà "4"
+```
+
+Inoltre quando la funzione possiede solo un parametro è possibile omettere le parentesi tonde che le racchiude:
+
+```
+const square = number => number * number
+
+const four = square(2)
+console.log(four) // Stamperà "4"
+```
+
+### this
+
+Uno dei meccanismi che possono creare confusione quando si ha a che fare con JavaScript è la parola chiave `this`: è una parola chiave speciale che identifica un automatismo che definisce l'ambito di una funzione. Ogni funzione, mentre è in esecuzione, possiede un riferimento al contesto di esecuzione corrente, chiamato `this`, il quale non fa mai riferimento ad un tipo primitivo ma ad un oggetto. Ci sono poche regole fondamentali su come la parola chiave `this` viene associata al contesto di esecuzione e tutte dipendono da dove il codice di una funzione viene eseguito. Nel corso di questa sezione analizzeremo queste regole, partendo da alcuni concetti chiave del linguaggio JavaScript molto legate alla parola chiave `this`, come l'ambito ed il contesto.
+
+#### Non facciamo confusione
+
+Una delle cose fondamentali da non fare quando si parla della parola chiave `this` in JavaScript, è quella di pensare che si riferisca ad una classe, ad oggetti, istanze e tutte le altre cose del mondo della programmazione orientata agli oggetti. Inoltre, non bisogna paragonare questa parola chiave a quella degli altri linguaggi di programmazione. Un'altra cosa importante da chiarire è che il contesto ("Context") e l'ambito ("Scope") di una funzione non sono la stessa cosa. Molti sviluppatori confondono i due termini, descrivendo in modo errato uno per l'altro. Quindi chiariamo subito il significato di questi due concetti prima di proseguire.
+
+*L'ambito ha a che fare con la visibilità delle variabili*. In JavaScript, si ottiene attraverso l'utilizzo delle funzioni. Quando usiamo la parola chiave var all'interno di una funzione, la variabile che stai inizializzando è privata per la funzione e non può essere vista al di fuori. Ma se dichiariamo altre funzioni al suo interno, allora quelle funzioni "interne" possono accedere a quella variabile perché si trovano nello stesso ambito. Le funzioni possono anche alle variabili dichiarate al loro interno ed a quelle dichiarate all'esterno, ma mai a quelle dichiarate all'interno di funzioni nidificate. Questo in JavaScript prende il nome di ambito.
+
+*Il contesto, è legato agli oggetti*. Si riferisce all'oggetto a cui appartiene una funzione. Quando si utilizza la parola chiave JavaScript `this`, si fa riferimento all'oggetto a cui appartiene la funzione. Il contesto di esecuzione, in cui `this` viene valutato, altro non è che il luogo in cui una particolare funzione viene invocata e in che modo viene invocata.
+
+#### Ambito globale
+
+Per comprendere bene questa regola fondamentale partiamo dal seguente frammento di codice:
+
+```
+function introduceYourself () {
+  console.log(`My name is ${this.name}`)
+}
+
+introduceYourself()
+```
+
+Nelle prime tre linee di codice abbiamo dichiarato una funzione `introduceYourself` che fa riferimento alla parola chiave `this` ed in particolare alla proprietà `name`. Subito dopo la dichiarazione di questa funzione la invochiamo. In questo caso `this`, non fa riferimento a nessun oggetto ma all'ambito globale di esecuzione di Node, quindi visto che l'abito globale non possiede alcuna proprietà `name` non c'è da stupirsi se il risultato che verrà restituito è `undefined`. Questo accade quando il codice non viene eseguito in _"modalità rigorosa"_ (`strict mode`). Infatti se proviamo a modificare il codice aggiungendo `strict mode` all'inizio del nostro file:
+
+
+```
+'use strict'
+
+function introduceYourself () {
+  console.log(`My name is ${this.name}`)
+}
+
+introduceYourself()
+```
+
+Otterremo un `TypeError` in fase di esecuzione: 
+
+
+```
+/home/davide/sourceCode/2/example.js:4
+  console.log(`My name is ${this.name}`)
+                                ^
+TypeError: Cannot read property 'name' of undefined
+```
+
+> La [modalità rigorosa](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode) di JavaScript, `strict mode`, è un modo per optare per una variante limitata di JavaScript, disattivando così implicitamente la cosìddetta __"modalità sciatta"__. La modalità rigorosa non è solo un sottoinsieme: ha intenzionalmente una semantica diversa dal codice normale.
+
+#### Legame implicito
+
+Per comprendere la seconda regola riprendiamo la funzione `introduceYourself` definita nell'esempio precedente e creiamo due oggetti con un riferimento ad essa. Ricordiamo che l'obiettivo è quello di essere in grado di guardare la definizione di una funzione utilizzando la parola chiave `this` e capire a cosa fa riferimento. Questa regola riuscirà a farci capire a cosa fa riferimento `this` nell'80% delle volte.
+
+```
+'use strict'
+
+function introduceYourself () {
+  console.log(`My name is ${this.name}`)
+}
+
+const person1 = { name: 'Paul', introduceYourself: introduceYourself }
+const person2 = { name: 'Steve', introduceYourself: introduceYourself }
+```
+
+Nel codice appena mostrato abbiamo due oggetti `person1` e `person2` con due proprietà. La prima proprietà è `name`, una stringa, che identifica il nome di una persona. Ora se vogliamo invocare la funzione `introduceYourself` sull'oggetto `person1` e `person2` dobbiamo utilizzare il punto `.`, nel modo seguente:
+
+```
+person1.introduceYourself()
+person2.introduceYourself()
+```
+
+Questo ci porta al punto chiave principale della regola. Per capire a cosa fa riferimento la parola chiave `this`, dobbiamo guardare prima a sinistra del punto in cui la funzione viene invocata. Se è presente un _"punto"_, guarda a sinistra di quel punto per trovare l'oggetto a cui fa riferimento la parola chiave `this`.
+
+Nell'esempio sopra, `person1` e `person2` si trovano a _"sinistra del punto"_, il che significa che la parola chiave `this` fa riferimento prima all'oggetto `person1` e poi all'oggetto `person2`. Quindi è come se, all'interno della funzione `introduceYourself`, l'interprete JavaScript lo cambiasse `this` in `person1` e `person2`.
+
+Eseguendo lo script il risultato che otterrete sarà il seguente:
+
+```
+Paul
+Steve
+```
+
+Ora facciamo un esempio simile, ma leggermente più avanzato. Definiamo una terza proprietà, `father`, al nostro oggetto `person2` che è il riferimento a `person1`:
+
+```
+'use strict'
+
+function introduceYourself () {
+  console.log(`My name is ${this.name}`)
+}
+
+const person1 = { name: 'Paul', introduceYourself: introduceYourself }
+const person2 = { name: 'Steve', introduceYourself: introduceYourself, father: person1 }
+
+person2.introduceYourself()
+person2.father.introduceYourself()
+```
+
+Come già detto in precedenza, l'80% delle volte dobbiamo vedere quello che c'è alla _"sinistra del punto"_ per capire a chi fa riferimento `this` quando invochiamo la funzione `introduceYourself`. Quando `introduceYourself` viene invocata la prima volta l'oggetto alla sinistra del punto è `person2` di conseguenza `this.name` farà riferimento alla stringa _"Steve"_. Quando `introduceYourself` viene invocata la seconda volta, invece, alla sinistra del punto c'è la proprietà `father`, che è un riferimento a `person1`, di conseguenza `this.name` farà riferimento alla stringa _"Paul"_.
+
+#### Legame esplicito
+
+Riconsideriamo per un attimo l'esempio fatto nel precedente paragrafo, ma questa volta senza creare alcun riferimento tra la funzione `introduceYourself` e l'oggetto `person`.
+
+```
+'use strict'
+
+function introduceYourself () {
+  console.log(`My name is ${this.name}`)
+}
+
+const person = { name: 'Paul' }
+```
+
+Sappiamo che per sapere a cosa fa riferimento la parola chiave `this`, dobbiamo prima guardare dove viene invocata la funzione. Ora, questo solleva la domanda, come possiamo invocare `introduceYourself` ma farlo invocare con la parola chiave `this` che fa riferimento all'oggetto utente? Non possiamo semplicemente utilizzare `person.introduceYourself()` come abbiamo fatto prima perché person non ha un metodo `introduceYourself`. In JavaScript, ogni funzione contiene un metodo che ci consente di fare esattamente questo. E quel metodo si chiama `call`.
+
+> *`call`* è un metodo presente su ogni funzione che permette di specificare, come primo parametro, il contesto in cui verrà invocata quella funzione. In altre parole, il primo argomento che passerai sarà ciò a cui fa riferimento la parola chiave `this` all'interno di quella funzione. Per maggiori informazioni consultare la [documentazione](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/call).
+
+Detto ciò, possiamo invocare `introduceYourself` nel contesto `person` in questo modo:
+
+
+```
+introduceYourself.call(person)
+```
+
+Rispetto alla regola di associazione implicita, questa volta non dobbiamo guardare alla _"sinistra del punto"_, bensì dobbiamo guardare solo ed esclusivamente al primo parametro della funzione `call`, quello sarà l'ambito a cui farà riferimento `this` nella funzione `introduceYourself`. È esattamente questo il motivo per cui questa regola viene definita come legame esplicito, perché stiamo esplicitamente (utilizzando `.call`), specificando a cosa fa riferimento la parola chiave `this`.
+
+```
+'use strict'
+
+function introduceYourself () {
+  console.log(`My name is ${this.name}`)
+}
+
+const person = { name: 'Paul' }
+introduceYourself.call(person)
+```
+
+Eseguendo questo script il risultato sarà il seguente:
+
+```
+Paul
+```
+
+Ora proviamo a modificare la nostra funzione `introduceYourself` in modo che abbia due ulteriori argomenti, `gender` e `age`.
+
+```
+function introduceYourself (gender, age) {
+  console.log(`My name is ${this.name}, I'm a ${gender} of ${age} years old!`)
+}
+```
+
+Ora se vogliamo passare gli argomenti alla funzione `call`, dobbiamo farlo uno alla volta dopo aver specificato il primo argomento che ne identifica il contesto.
+
+```
+'use strict'
+
+function introduceYourself (gender, age) {
+  console.log(`My name is ${this.name}, I'm a ${gender} of ${age} years old!`)
+}
+
+const person = { name: 'Paul' }
+const arguments = ['male', 36]
+introduceYourself.call(person, arguments[0], arguments[1])
+```
+
+Ecco come passare argomenti a una funzione invocata con `call`. Tuttavia, è un po' fastidioso dover passare gli argomenti uno per uno dal nostro array di argomenti. Sarebbe bello se potessimo passare l'intero array come secondo argomento e JavaScript li diffonderebbe per noi. Questo è esattamente ciò che fa `apply`. `apply` funziona esattamente come `.call`, ma invece di passare gli argomenti uno per uno, possiamo passare un singolo array e `apply` si occuperà di distribuire ogni elemento dell'array per noi come argomenti della funzione.
+
+Quindi ora usando `apply`, il nostro codice può cambiare in questo modo:
+
+```
+'use strict'
+
+function introduceYourself (gender, age) {
+  console.log(`My name is ${this.name}, I'm a ${gender} of ${age} years old!`)
+}
+
+const person = { name: 'Paul' }
+const arguments = ['male', 36]
+introduceYourself.apply(person, arguments)
+```
+
+Finora, con la nostra regola _"Legame esplicito"_, abbiamo imparato a conoscere `.call` e `.apply` che consentono entrambi di invocare una funzione, specificando a cosa farà riferimento la parola chiave `this` all'interno di quella funzione. L'ultima funzione che dobbiamo conoscere ora è `bind`. Questa funzione è identica a `call` ma invece di invocare immediatamente la funzione, restituirà una nuova funzione che possiamo invocare in un secondo momento. Quindi, se guardiamo il nostro codice precedente, utilizzando `bind`, sarà il seguente:
+
+```
+'use strict'
+
+function introduceYourself (gender, age) {
+  console.log(`My name is ${this.name}, I'm a ${gender} of ${age} years old!`)
+}
+
+const person = { name: 'Paul' }
+const arguments = ['male', 36]
+const newPrint = introduceYourself.bind(person, arguments[0], arguments[1])
+newPrint()
+```
+
+#### La parola chiave new
+
+Un ulteriore modo per comprendere a cosa fa riferimento `this` è la parola chiave `new`. Se non hai familiarità con questa parola chiave in JavaScript, considera che ogni volta che invochi una funzione con la parola chiave `new`, l'interprete JavaScript creerà un nuovo oggetto per te e lo chiamerà `this`. Quindi, naturalmente, se una funzione è stata chiamata con `new`, la parola chiave `this` fa riferimento a quel nuovo oggetto creato dall'interprete.
+
+```
+function Person (name, age) {
+  this.name = name
+  this.age = age
+}
+
+const me = new Person('Davide', 36)
+```
+
+Nell'esempio appena mostrato JavaScript crea un nuovo oggetto chiamato __"`this`"__ che delega a `Person.prototype` le ricerche non riuscite. Se una funzione viene chiamata con la parola chiave `new`, allora è questo nuovo oggetto creato dall'interprete a cui fa riferimento parola chiave `this`.
+
+#### Legame lessicale
+
+La parola chiave `this` in JavaScript è probabilmente più complessa di quanto dovrebbe essere. Ecco la buona notizia, questa prossima regola è la più intuitiva. È probabile che tu abbia sentito parlare e abbia usato le funzioni freccia (meglio conosciute come __"arrow function"__). Sono state introdotte a partire da ES6. Consentono di scrivere funzioni in un formato più conciso.
+
+
+```
+persons.map(person => person.name)
+```
+
+Ancor più della concisione, questo tipo di funzioni hanno un approccio molto più intuitivo quando si tratta della parola chiave `this`. A differenza delle normali funzioni, le __arrow function__ non hanno `this`. Invece, `this` è determinato lessicalmente. È un modo elegante per dire che `this` è determinato seguendo le normali regole di ricerca delle variabili nella catena prototipale. Chiariamo meglio il concetto con un esempio, prendiamo in considerazione il seguente esempio:
+
+```
+const person = {
+  name: 'Davide',
+  age: 36,
+  gender: 'male',
+  frameworks: ['Fastify', 'React', 'Vue'],
+  introduceYourself() {
+    const message = `My name is ${this.name}, I'm a ${this.gender} of ${this.age} years old! My favourite frameworks are: `
+
+    const langs = this.frameworks.reduce(function (str, framework, i) {
+      if (i === this.frameworks.length - 1) {
+        return `${str} and ${framework}.`
+      }
+
+      return `${str} ${framework},`
+    }, "")
+
+    console.log(message.concat(langs))
+  }
+}
+
+person.introduceYourself()
+```
+
+Se proviamo ad eseguire questo codice, avreno un errore a runtime:
+
+
+```
+/functions/lexical.js:13
+  if (i === this.frameworks.length - 1) {
+                     ^
+TypeError: Cannot read property 'frameworks' of undefined
+```
+
+Quando invochiamo `person.introduceYourself()`, ci aspettiamo di vedere _My name is Davide, I'm a male of 36 years old! ..._. Secondo il nostro errore, `this.frameworks` non è definito. Esaminiamo i nostri passaggi per capire a cosa si riferisce `this` e soprattutto cerchiamo di capire perché non fa riferimento a `person` come dovrebbe essere. 
+
+Per prima cosa, dobbiamo guardare dove viene invocata la funzione. La funzione viene passata a `.reduce` quindi non ne abbiamo idea. In realtà non vediamo mai l'invocazione della nostra funzione anonima poiché JavaScript lo fa da solo nell'implementazione di `.reduce`. Questo è il problema. Dobbiamo specificare che vogliamo che la funzione anonima che passiamo a `.reduce` venga invocata nell'ambito di `person`. In questo modo `this.frameworks` farà riferimento a `person.frameworks`. Come abbiamo visto in precedenza, possiamo usare `.bind`:
+
+
+```
+const person = {
+  name: 'Davide',
+  age: 36,
+  gender: 'male',
+  frameworks: ['Fastify', 'React', 'Vue'],
+  introduceYourself() {
+    const message = `My name is ${this.name}, I'm a ${this.gender} of ${this.age} years old! My favourite frameworks are: `
+
+    const langs = this.frameworks.reduce(function (str, framework, i) {
+      if (i === this.frameworks.length - 1) {
+        return `${str} and ${framework}.`
+      }
+
+      return `${str} ${framework},`
+    }.bind(this), "")
+
+    console.log(message.concat(langs))
+  }
+}
+
+person.introduceYourself()
+```
+
+Eseguendo il codice il risultato che otterremo sarà il seguente:
+
+
+```
+My name is Davide, I'm a male of 36 years old! My favourite frameworks are:  Fastify, React, and Vue.
+```
+
+Abbiamo visto come `.bind` può risolverci ancora una volta il problema, ma in che modo è collegato alle _arrow functions_? Prima abbiamo detto che all'interno delle _arrow functions_, `this` viene determinato lessicalmente e quindi segue la catena prototipale finché non trova la variabile `frameworks`. Nell'esempio mostrato in precedenza, seguendo la catena prototipale, `this` fa riferimento proprio a `person` e quindi `this.frameworks`. Non c'è motivo di creare un nuovo contesto di esecuzione solo perché abbiamo utilizzato la funzione `.reduce`. Quindi rimuovendo la funzione `.bind(this)` ed utilizzando una _arrow function_ anonima, il codice avrà il seguente aspetto:
+
+```
+const person = {
+  name: 'Davide',
+  age: 36,
+  gender: 'male',
+  frameworks: ['Fastify', 'React', 'Vue'],
+  introduceYourself() {
+    const message = `My name is ${this.name}, I'm a ${this.gender} of ${this.age} years old! My favourite frameworks are: `
+
+    const langs = this.frameworks.reduce((str, framework, i) => {
+      if (i === this.frameworks.length - 1) {
+        return `${str} and ${framework}.`
+      }
+
+      return `${str} ${framework},`
+    }, "")
+
+    console.log(message.concat(langs))
+  }
+}
+
+person.introduceYourself()
+```
+
+Anche in questo caso il risultato che otterremo sarà:
+
+```
+My name is Davide, I'm a male of 36 years old! My favourite frameworks are:  Fastify, React, and Vue.
+```
+
+Questo risultato dimostra come le _arrow function_ non hanno il loro proprio `this`. Invece l'interprete JavaScript cercherà nell'ambito (genitore) che lo racchiude per determinare a cosa si riferisce.
+
+## L'operatore spread
+
+L'operatore *spread* divide un oggetto in singoli valori ed è comunemente usato per inviare i valori di un oggetto iterabile come argomenti di una funzione. In JavaScript questo operatore viene rappresentato dalla stringa `...`. Come esempio vediamo come trasformare un array e passare i suoi valori come parametri di una funzione.
+
+Prima che l'operatore spread venisse introdotto, la stessa operazione veniva effettuata utilizzando la funzione `Function.apply`, vista nei paragrafi precedenti:
+
+
+```
+function introduceYourself(a, b, c) {
+  console.log(a, b, c)
+}
+
+const arr = ['Hello,', 'Node.js', '!']
+introduceYourself.apply(null, arr)
+```
+
+In questo caso il metodo `Function.apply`, prende in input l'array `arr` e da in pasto alla funzione `introduceYourself` i suoi elementi uno alla volta come parametri. È una funzionalità molto utilizzata dai programmatori JavaScript, ma l'operatore spread ci consente di fare esattamente la stessa cosa senza utilizzare il metodo `Function.apply`. Vediamo come:
+
+
+```
+function sayHello(a, b, c) {
+  console.log(a, b, c)
+}
+
+const arr = ['Hello,', 'Node.js', '!']
+sayHello(...arr)
+```
+
+Eseguendo entrambi gli script il risultato che otterremo sarà il seguente:
+
+
+```
+Hello, Node.js !
+```
+
+### Altri utilizzi dell'operatore spread
+
+L'operatore spread non è utile solo per inviare parametri ad una funzione. Può essere utilizzato in diversi ambiti, soprattutto con operazioni riguardanti gli array. Nei prossimi paragrafi ne vedremo qualcuno.
+
+#### Concatenare array
+
+Uno dei modi in cui in JavaScript è possibile concatenare due array, è mediante l'utilizzo della funzione `concat()`. Vediamo qualche esempio di utilizzo:
+
+
+```
+const a = [1, 2, 3, 4, 5]
+const b = a.concat([6, 7, 8, 9])
+
+console.log(b) // [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+```
+
+Notiamo che la funzione `concat`, non agisce sulla variabile su cui la invochiamo, bensì restituisce un risultato. Un'altro modo per concatenare due array, è utilizzando il metodo `push` in questo modo:
+
+
+```
+const a = [1, 2, 3, 4, 5]
+const b = [6, 7, 8, 9]
+
+Array.prototype.push.apply(a, b);
+console.log(a) // [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+```
+
+È possibile però che in questi casi possiamo utilizzare l'operatore spread, vediamo come:
+
+
+```
+const a = [1, 2, 3, 4, 5]
+const b = [6, 7, 8, 9]
+
+a.push(...b)
+
+console.log(a) // [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+```
+
+#### Valori di un array come parti di un altro array
+
+Immaginiamo di voler effettuare il merge dei due array utilizzati in precedenza con una particolarità; in particolare vogliamo che l'array `[6, 7, 8, 9]` sia contenuto nell'array `[1, 2, 3, 4]`, però tra il valore `2` e `3`. È possibile effettuare questa operazione mediante l'utilizzo dell'operatore spread. Vediamo come:
+
+```
+const a = [6, 7, 8, 9]
+const b = [1, 2, ...a, 3, 4, 5]
+
+console.log(b) // [ 1, 2, 6, 7, 8, 9, 3, 4, 5 ]
+```
+
+#### Utilizzare l'operatore spread su più array
+
+È anche possibile utilizzare l'operatore spread su più array su una singola riga di codice. Come nell'esempio seguente:
+
+
+```
+let a = [1, 2]
+let b = [3]
+let c = [...a, ...b, ...[4, 5]]
+let d = [6]
+
+function sum(a, b, c, d, e, f) {
+  return a + b + c + d + e + f
+}
+
+let result = sum(...c, ...d)
+console.log(result) // 21
+```
+
+=== I parametri rest
+
+Così come l'operatore spread, anche l'operatore rest viene rappresentato dalla stringa `...`. Rappresenta solitamente l'ultimo elemento di una funzione ed indica tutti quei parametri della funzione che non sono stati dichiarati nella firma della funzione. Prima dell'avvento di ES6 i programmatori utilizzavano l'oggetto `arguments`, che è un oggetto ma fornisce un interfaccia simile a quella di un array. Ecco un esempio:
+
+
+```
+function foo(a, b) {
+  console.log(arguments)
+}
+
+foo(1, 2, 3, 4, 5)
+```
+
+Se eseguiamo questo frammento di codice notiamo che `arguments` non è un array (da come il nome potrebbe far pensare), bensì un oggetto strutturato nel seguente modo:
+
+```
+{
+  '0': 1,
+  '1': 2,
+  '2': 3,
+  '3': 4,
+  '4': 5
+}
+```
+
+Quindi volendo fare in modo di avere tutti i parametri che non sono dichiarati nella firma della funzione, dobbiamo inventarci qualcosa tipo:
+
+```
+function foo(a, b) {
+  const args = Array.prototype.slice.call(arguments, foo.length)
+  console.log(a, b)
+  console.log(args)
+}
+
+foo(1, 2, 3, 4, 5)
+```
+
+Il risultato che vedrete a video sarà il seguente:
+
+```
+1 2
+[ 3, 4, 5 ]
+```
+
+Questo sarebbe molto più facile se usassimo il parametro rest nella dichiarazione della nostra funzione. Prendedo in esame la funzione descritta in precedenza, vediamo come fare:
+
+```
+function foo(a, b, ...args) {
+  console.log(a, b)
+  console.log(args)
+}
+
+foo(1, 2, 3, 4, 5)
+```
+
+Il risultato che verrà stampato a video sarà esattamente lo stesso che abbiamo ottenuto nell'esempio descritto in precedenza.
+
+## La destrutturazione
+
+La destrutturazione è una delle funzionalità più interessanti introdotte in JavaScript. In pratica ci constente di estrarre, dati da un array o un oggetto in variabili ben specifiche. Questa funzionalità è già presente in python e perl, e dall'avvento di ES6 è presente anche in JavaScript.
+
+### La destrutturazione di un array
+
+Immaginiamo di avere un array di quattro stringhe e di voler avere quattro distinte variabili, una per ogni stringa contenuta nell'array. Per farlo il codice è il seguente:
+
+
+```
+const array = ['Hello', 'World!', 'I am', 'Davide']
+const a = array[0]
+const b = array[1]
+const c = array[2]
+const d = array[3]
+
+console.log(a, b, c, d) // Hello World! I am Davide
+```
+
+Possiamo utilizzare la destrutturazione degli array ed avere lo stesso risultato utilizzando una sola riga di codice. Per farlo basta fare nel seguente modo:
+
+```
+const array = ['Hello', 'World!', 'I am', 'Davide']
+const [a, b, c, d] = array
+
+console.log(a, b, c, d) // Hello World! I am Davide
+```
+
+Converrete con me che ora il codice è molto più leggibile rispetto all'esempio precedente vero? Il risultato è esattamente lo stesso, ma il codice sembra più pulito ed elegante. È possibile, inoltre, ingnorare le posizioni dell'array di cui non necessitiamo. Per esempio immaginiamo di avere la necessità di utilizzare solo le ultime due stringhe contenute all'interno di questo array. Prima della funzionalità di destrutturazione bisognava farlo in questo modo:
+
+```
+const array = ['Hello', 'World!', 'I am', 'Davide']
+const a = array[array.length - 2]
+const b = array[array.length - 1]
+
+console.log(a, b) // I am Davide
+```
+
+Invece con la destrutturazione possiamo ignorare le prime due posizioni dell'array nel seguente modo, ottenendo lo stesso risultato:
+
+
+```
+const array = ['Hello', 'World!', 'I am', 'Davide']
+const [ , , a, b] = array
+
+console.log(a, b) // I am Davide
+```
+
+Nel caso in cui si ha la necessità di possedere, in due distinte variabili, le prime due posizioni dell'array:
+
+
+```
+const array = ['Hello', 'World!', 'I am', 'Davide']
+const [a, b] = array
+
+console.log(a, b) // Hello, World!
+```
+
+Potremmo anche utilizzare l'operatore rest per fare in modo che il resto delle posizioni dell'array che non ci interessano, finiscano un nuovo array. Per esempio
+
+
+```
+const array = ['Hello', 'World!', 'I am', 'Davide']
+const [a, b, ...rest] = array
+
+console.log(a, b, rest) // Hello, World! [ 'I am', 'Davide' ]
+```
+
+IMPORTANT: Ricordate che se utilizzate la destrutturazione, è possibile utilizzare l'operatore rest solo ed esclusivamente come ultimo elemento del vostro risultato.
+
+#### Destrutturazione di un array come parametro di una funzione
+
+È possibile utilizzare la destrutturazione degli array come parametri di una funzione. Pe esempio:
+
+```
+function printGreeting([a = 'Bye', b = 'bye', ...rest] = []) {
+  console.log(a, b)
+}
+
+printGreeting(['Hello', 'World!']) // Hello, World!
+printGreeting()
+```
+
+In questo caso nel momento in cui alla funzione viene passato un parametro `undefined`, come nella seconda invocazione della funzione, verrà stampato il messaggio `Bye bye`.
+
+### La destrutturazione di un oggetto
+
+Così come per gli array, anche con gli oggetti è possibile destrutturare un assegnamento facendo in modo che le sue proprietà vengano assegnate a variabili distinte. Prima di ES6 i programmatori si preoccupavano di assegnare ad una variabile il valore della proprietà di un oggetto. Ecco un esempio:
+
+
+```
+const car = {
+  model: 'TESLA MODEL S',
+  price: 60000
+}
+
+const model = car.model
+const price = car.price
+console.log(`Model: ${model}`) // Model: TESLA MODEL S
+console.log(`Price: ${price} €`) // Price: 60000 €
+```
+
+In JavaScript è possibile fare questa operazione in una singola linea di codice:
+
+
+```
+const car = {
+  model: 'TESLA MODEL S',
+  price: 60000
+}
+
+const { model, price } = car
+console.log(`Model: ${model}`) // Model: TESLA MODEL S
+console.log(`Price: ${price} €`) // Price: 60000 €
+```
+
+Sulla parte sinistra dell'assegnamento, bisogna inserire i nomi delle variabili, aventi i nomi corrispondenti alle proprietà dell'oggetto che si vuole destrutturare. Sulla destra, invece, inseriamo l'oggetto che si desidera destrutturare. Il valore dell'oggetto `car.model` e `car.price` verranno assegnati rispettivamente alle variabili `model` e `price`. L'ordine non ha importanza. Ma , nel caso in cui vogliamo assegnare i valori dell'oggetto a variabili con nomi diversi:
+
+
+```
+const car = {
+  model: 'TESLA MODEL S',
+  price: 60000
+}
+
+const { model: m, price: p } = car
+console.log(`Model: ${m}`) // Model: TESLA MODEL S
+console.log(`Price: ${p} €`) // Price: 60000 €
+```
+
+In questo modo i valori delle proprietà `car.model` e `car.price` verranno assegnati rispettivamente alle variabili `m` e `p`. In parole povere i due punti `:` indicano `cosa : va dove`. Durante la destrutturazione di un oggetto è possibile definire anche valori di default alle variabili. Per esempio:
+
+
+```
+const car = {
+  model: 'TESLA MODEL S',
+  price: 60000
+}
+
+const { model, price, km = 20000 } = car
+console.log(`Model: ${model}`) // Model: TESLA MODEL S
+console.log(`Price: ${price} €`) // Price: 60000 €
+console.log(`Km: ${km}`) // Km: 20000
+```
+
+#### Destrutturazione di un oggetto come parametro di una funzione
+
+È possibile utilizzare la destrutturazione degli oggetti come parametri di una funzione. Per esempio:
+
+
+```
+function printCar({model = 'Ferrari', price = 200000, km = 10} = {}) {
+  console.log(`Model: ${model}`) // Model: TESLA MODEL S
+  console.log(`Price: ${price} €`) // Price: 60000 €
+  console.log(`Km: ${km}`) // Km: 10
+}
+
+printCar({ model: 'TESLA MODEL S', price: 60000 })
+```
+
+In questo caso, passiamo un oggetto vuoto `{}` come parametro di default, per prevenire il caso in cui la funzione venga invocata senza alcun parametro.
+
+## Classi, prototipi ed ereditarietà
+
+Nei paragrafi precedenti abbiamo discusso degli oggetti. In particolare abbiamo visto come creare un oggetto e come è possibile definirne le proprietà. Quando creiamo un oggetto in JavaScript implicitamente viene creata una proprietà speciale definita come **[[prototype]]**. Questà proprietà speciale altro non è che un riferimento implicito ad un altro oggetto che viene interrogata nella ricerca di proprietà.
+
+Se un oggetto non possiede una specifica proprietà, viene controllato il prototipo dell'oggetto per quella proprietà. Se il prototipo dell'oggetto non ha quella proprietà, viene controllato il prototipo di quell'oggetto e così via. Ecco come funziona l'ereditarietà in JavaScript, attraverso questa proprietà speciale che ogni oggetto, o quasi, possiede ed è anche per questo che in JavaScript l'ereditarietà viene chiamata prototipale. Ne esploreremo in dettaglio il funzionamento nei prossimi paragrafi.
+
+### Object.create
+
+In JavaScript questo metodo può essere utilizzato per creare oggetti e può essere utilizzato per sostituire l'operatore `new`, visto in precedenza. Possiamo utilizzarlo per creare un nuovo oggetto basandoci su un oggetto definito, con un suo ben specifico prototipo, e assegnarlo ad un altro. Per esempio:
+
+
+```
+const anotherObject = {
+  a: 2
+}
+
+// crea un oggetto collegato a anotherObject
+const myObject = Object.create(anotherObject)
+
+myObject.a // il valore sarà 2
+```
+
+Quindi, abbiamo `myObject` che ora è collegato ad `anotherObject`. Chiaramente `myObject.a` non esiste ma, tuttavia, l'accesso alla proprietà ha esito positivo (trovandosi su `anotherObject`) e infatti trova il valore 2.
+
+### Ereditarietà
+
+Sostanzialmente in JavaScript si ottiene con una catena di **prototype**. Esistono diversi modi per creare questa catena di prototipi, ma in questo libro analizzeremo i più comuni:
+
+- Funzionale
+- Funzioni costruttore
+- Classi
+
+Utilizzando **prototype** possiamo aggiungere nuove proprietà e metodi a un costruttore di oggetti esistente. Possiamo quindi essenzialmente dire al nostro codice JavaScript di ereditare le proprietà da un prototipo. Questa catena di prototipi ci consente di riutilizzare le proprietà ed i metodi da un oggetto JavaScript a un altro tramite una funzione puntatore al riferimento. Volendo fare un paragone rispetto all'ereditarietà classica partiamo da un semplice esempio. Consideriamo la seguente catena di ereditarietà:
+
+image::ch-2/01.png[Sunset]
+
+Nell'ereditarietà classica le classi **Cat** e **Dog** ereditano i comportamenti dalla classe **Mammal**, mentre **g1**, **g2** sono istanze della classe Gatto e **c1**, **c2** sono istanze della classe Cane. In JavaScript, invece le cose cambiano radicalmente quando parliamo di ereditarietà:
+
+image::ch-2/02.png[Sunset]
+
+In questo caso, invece, **g1** e **g2** sono prototipi di **Cat**, mentre **c1** e **c2** sono prototipi di **Dog**. **Dog** e **Cat** sono a loro volta prototipi di **Mammal**.
+
+#### L'ereditarietà funzionale
+
+Per creare le catene di prototipi con questa metodologia basta usare la funzione `Object.create` mostrata precedentemente. Vediamo come farlo con un esempio:
+
+```
+const mammal = {
+  introduceYourself: function () {
+    console.log(`Hello I'm a ${this.type} and my name is: ${this.name}`)
+  }
+}
+
+const cat = Object.create(mammal, {
+  type: { value: 'cat' },
+  noise: { value: 'meow' },
+  meow: { value: function () {
+    console.log(`I ${this.noise}: MEEEEEOOOOOW`)
+  }}
+})
+
+const dog = Object.create(mammal, {
+  type: { value: 'dog' },
+  noise: { value: 'bark' },
+  woof: { value: function () {
+    console.log(`I ${this.noise}: WOOF WOOF`)
+  }}
+})
+
+const fuffy = Object.create(cat, { 
+  name: { value: 'Fuffy' } 
+})
+fuffy.introduceYourself()
+fuffy.meow()
+
+const bobby = Object.create(dog, {
+  name: { value: 'Bobby' }
+})
+bobby.introduceYourself()
+bobby.woof()
+```
+
+Provando ad eseguire il codice dalla linea di comando il risultato che otterrete sarà il seguente:
+
+
+```
+Hello I'm a cat and my name is: Fuffy
+I meow: MEEEEEOOOOOW
+Hello I'm a dog and my name is: Bobby
+I bark: WOOF WOOF
+```
+
+L'oggetto `mammal` è un semplice oggetto JavaScript, creato utilizzando le parentesi graffe {}. Il prototipo di oggetti semplici come questo è Object.prototype. Utilizzando la funzione `Object.create`,descritta in precedenza, abbiamo creato gli oggetti `dog` e `cat` passando come primo argomento il prototipo dell'oggetto desiderato, in questo caso `mammal`. Quindi `mammal` è il prototipo di dog e `cat`. Quando vengono creati gli oggetti `bobby` e `fuffy` vengono passati come primo argomento della funzione `Object.create` rispettivamente `dog` e `cat`. Quindi dog è il prototipo di `bobby` e `cat` è il prototipo di `fuffy`. Quindi volendo descrivere l'intera catena di prototipi:
+
+- Il prototipo di `fuffy` è `cat`;
+- Il prototipo di `bobby` è `dog`;
+- Il prototipo di `dog` e `cat` è `mammal`;
+- Il prototipo di `mammal` è Object.prototype.
+
+Analizzando i passaggi effettuati da `fuffy.introduceYourself()` (allo stesso modo vengono fatti da `bobby.introduceYourself()`), cerchiamo di capire ancora meglio quali passaggi vengono effettuati:
+
+- Viene controllato se `fuffy` ha una proprietà presentati; non è così;
+- Viene controllato se il prototipo di `fuffy`, quindi `cat`, ha una proprietà presentati; non è così;
+- Viene controllato se il prototipo di `cat`, `mammal`, ha una proprietà presentati; la esegue;
+- Esegue la funzione `introduceYourself` su `fuffy`, quindi tipologia di `mammal`, `this.type` sarà _"cat"_ e `this.name` sarà _"Fuffy"_.
+
+Per completare il paradigma funzionale applicato all'eredità prototipale, la creazione di un'istanza di un cane e di un gatto può essere generalizzata con una funzione:
+
+```
+...
+function createCat (name) {
+  return Object.create(cat, {
+    name: { value: name }
+  })
+}
+
+function createDog (name) {
+  return Object.create(dog, {
+    name: { value: name }
+  })
+}
+
+const fuffy = createCat('Fuffy')
+fuffy.introduceYourself()
+fuffy.meow()
+
+const bobby = createDog('Bobby')
+bobby.introduceYourself()
+bobby.woof()
+```
+
+Il prototipo di un oggetto può essere ispezionato con `Object.getPrototypeOf`:
+
+```
+console.log(Object.getPrototypeOf(fuffy) === cat) //true
+console.log(Object.getPrototypeOf(bobby) === dog) //true
+```
+
+Eseguendo lo script con tutte le modifiche appena descritte il risultato sarà:
+
+```
+Hello I'm a cat and my name is: Fuffy
+I meow: MEEEEEOOOOOW
+Hello I'm a dog and my name is: Bobby
+I bark: WOOF WOOF
+true
+true
+```
+
+#### L'ereditarietà con le funzioni costruttore
+
+Questo approccio è molto utilizzato e semplice, basta dichiarare una funzione e richiamarla utilizzando la parola chiave **new**. Riprendiamo l'esempio fatto in precedenza e analizziamo il codice:
+
+```
+function Mammal (name) {
+  this.name = name
+}
+
+Mammal.prototype.introduceYourself = function () {
+  console.log(`Hello I'm a ${this.type} and my name is: ${this.name}`)
+}
+
+function Cat (name) {
+  this.type = 'cat'
+  this.noise = 'meow'
+  Mammal.call(this, name)
+}
+
+Cat.prototype.meow = function () {
+  console.log(`Io ${this.noise}: MEEEEOOOOW`)
+}
+
+Object.setPrototypeOf(Cat.prototype, Mammal.prototype)
+
+function Dog (name) {
+  this.type = 'dog'
+  this.noise = 'bark'
+  
+  Mammal.call(this, name)
+}
+
+Dog.prototype.woof = function () {
+  console.log(`Io ${this.noise}: WOOF WOOF`)
+}
+
+Object.setPrototypeOf(Dog.prototype, Mammal.prototype)
+
+const fuffy = new Cat('Fuffy')
+fuffy.introduceYourself()
+fuffy.meow()
+
+const bobby = new Dog('Bobby')
+bobby.introduceYourself()
+bobby.woof()
+```
+
+Non c'è da meravigliarsi se anche in questo caso il risultato è:
+
+```
+Hello I'm a cat and my name is: Fuffy
+I meow: MEEEEEOOOOOW
+Hello I'm a dog and my name is: Bobby
+I bark: WOOF WOOF
+true
+true
+```
+
+Le funzioni costruttore `Doc`, `Cat` e `Mammal` hanno la prima lettera maiuscola. Così come nell'OOP (_Object Oriented Programming_) in generale è una convenzione anche in questo caso lo è.
+
+Quando viene eseguito `new Cat('Fuffy')`, viene creata una nuova istanza (*fuffy*) di `Cat`. Questo nuovo oggetto è anche l'oggetto *this* all'interno della funzione costruttore `Cat`. Quest'ultima, a sua volta, passa il riferimento di sè stesso, **this**, a `Mammal.call`. L'utilizzo di questo metodo consente di impostare **this** della funzione chiamata attraverso il primo argomento che gli è stato passato. Quindi, quando questo viene passato a `Mammal.call`, viene creato un riferimento anche all'oggetto appena creato (che alla fine viene assegnato a **fuffy**) tramite l'oggetto **this** all'interno della funzione di costruzione `Cat`. Tutti gli argomenti successivi passati alla chiamata diventano argomenti delle funzione, quindi l'argomento `name` passato a `Mammal` è _"Fuffy"_. Il costruttore di `Mammal` imposta `this.name` con _"Fuffy"_, il che significa che alla fine `fuffy.name` sarà anch'esso _"Fuffy"_. Quindi volendo descrivere l'intera catena di prototipi che si è creata:
+
+- Il prototipo di **fuffy** è `Cat.prototype`;
+- Il prototipo di **bobby** è `Dog.prototype`;
+- Il prototipo di **Cat** e **Dog** è `Mammal.prototype`;
+- Il prototipo di **Mammal** è `Object.prototype`.
+
+#### L'ereditarietà con le classi
+
+Abbiamo visto che il modello orientato agli oggetti di JavaScript si basa sui costruttori e sull'ereditarietà basata sui prototipi. Bene, le classi sono solo una nuova sintassi per il modello esistente. Le classi non introducono un nuovo modello orientato agli oggetti in JavaScript. Le classi mirano a fornire una sintassi molto più semplice e chiara per gestire i costruttori e l'ereditarietà.
+
+In effetti, le classi sono funzioni. Le classi sono solo una nuova sintassi per la creazione di funzioni utilizzate come costruttori, infatti se utilizzate se dalla linea di comando digitate:
+
+```
+$ node -p "typeof class Mammal {}"
+function
+```
+
+##### Creare una classe
+
+La creazione di funzioni utilizzando le classi che non vengono utilizzate come costruttori non ha alcun senso e non offre vantaggi. Piuttosto, rende il codice difficile da leggere, poiché diventa confuso. L’utilizzo di `class` altro non fa che ridurre il numero di linee di codice, aumentando di conseguenza la leggibilità, utile alla creazione di catene di prototipi.
+
+Dichiarare una classe è molto semplice, basta utilizzare la parola chiave `class` seguita dal nome della classe. Per esempio ecco come possiamo dichiarare la classe `Mammal`:
+
+
+```
+class Mammal {
+  constructor (name) {
+    this.name = name
+  }
+}
+
+const mammal = new Mammal('Fuffy')
+console.log(mammal.name) // Stampa a video "Fuffy"
+```
+
+Qui abbiamo dichiarato una classe denominata `Mammal`. Poi, abbiamo definito un metodo `constructor` al suo interno. Infine, abbiamo creato un'istanza della classe `Mammal`, e abbiamo stampato la proprietà `name` dell'oggetto appena creato. 
+
+Le classi vengono trattate come funzioni e internamente il nome della classe viene considerato come il nome della funzione e il corpo del metodo del costruttore viene considerato come il corpo della funzione. Può esserci un solo costruttore dichiarato all'interno di una classe. La definizione di più di un costruttore genererà l'eccezione `SyntaxError`.
+
+Il metodo del costruttore in ogni classe equivale al corpo della funzione di una funzione costruttore. Quindi l'esempio mostrato in precedenza equivale al seguente:
+
+
+```
+function Mammal (name) {
+  this.name = name
+}
+
+const mammal = new Mammal('Fuffy')
+console.log(mammal.name) // Stamperà "Fuffy"
+```
+
+##### I metodi prototype
+
+Tutti i metodi implementati all'interno della classe vengono aggiunti alla porietà `prototype` della nostra classe. La proprietà `prototype` è il prototipo degli oggetti creati utilizzando `class`.
+
+
+```
+class Mammal {
+  constructor (name) {
+    this.name = name
+  }  
+
+  introduceYourself () {
+    console.log(`Hello, my name is ${this.name}`)
+  }
+}
+
+const mammal = new Mammal('Fuffy')
+mammal.introduceYourself() // Stamperà "Hello, my name is Fuffy"
+```
+
+Il codice appena mostrato è lo stesso del seguente utilizzando le funzioni:
+
+
+```
+function Mammal (name) {
+  this.name = name
+}
+
+Mammal.prototype.introduceYourself = function () {
+  console.log(`Hello, my name is ${this.name}`)
+}
+
+const mammal = new Mammal('Fuffy')
+mammal.introduceYourself() // Stamperà "Hello, my name is Fuffy"
+```
+
+##### I metodi get e set
+
+In precedenza abbiamo visto come è possibile aggiungere proprietà agli oggetti utilizzando il metodo `Object.defineProperty()`. Ora invece vedremo come farlo all'interno delle classi con i prefissi `get` e `set` per i metodi. Questi metodi possono essere aggiunti ai valori dell'oggetto e alle classi per definire gli attributi `get` e `set` delle proprietà.
+Quando i metodi `get` e `set` vengono utilizzati nel corpo di una classe, vengono aggiunti alla proprietà `prototype` della classe.
+
+Ecco un esempio per dimostrare come definire i metodi get e set in una classe:
+
+
+```
+class Mammal {
+  constructor (name) {
+    this._name = name
+  }
+
+  get name () {
+    return this._name
+  }
+
+  set name (name) {
+    this._name = name
+  }
+
+  introduceYourself () {
+    console.log(`Hello, my name is ${this._name}`)
+  }
+}
+```
+
+
+```
+const mammal = new Mammal('Fuffy')
+mammal.introduceYourself() // Stamperà "Hello, my name is Fuffy"
+
+mammal.name = 'Kitty'
+mammal.introduceYourself() // Stamperà "Hello, my name is Kitty"
+```
+
+Anche in questo caso il codice appena mostrato può essere riscritto utilizzando le funzioni:
+
+
+```
+function Mammal (name) {
+  this._name = name
+}
+
+Mammal.prototype.introduceYourself = function () {
+  console.log(`Hello, my name is ${this._name}`)
+}
+
+Object.defineProperty(Mammal.prototype, 'name', {
+  get: function () { 
+    return this._name 
+  },
+  set: function (newValue) { 
+    this._name = newValue
+  }
+})
+
+const mammal = new Mammal('Fuffy')
+mammal.introduceYourself() // Stamperà "Hello, my name is Fuffy"
+
+mammal.name = 'Kitty'
+mammal.introduceYourself() // Stamperà "Hello, my name is Kitty"
+```
+
+##### La catena di prototipi, l'ereditarietà
+
+In precedenza in questo capitolo, abbiamo visto quanto fosse difficile implementare la gerarchia di ereditarietà nelle funzioni. Pertanto, l'utilizzo delle classi mira a renderlo facile introducendo la clausola `extends` e la parola chiave `super`.
+
+Utilizzando la clausola `extends`, una classe può ereditare proprietà statiche e non statiche di un altro costruttore. La parola chiave `super`, invece, viene utilizzata in due modi:
+
+- Viene utilizzato nel costruttore di una classe per invocare il costruttore padre.
+- Viene utilizzato nei metodi di una classe per invocare i metodi statici e non di una classe padre.
+
+Riprendiamo ora il nostro esempio e ricostruiamo la nostra catena di prototipi utilizzando le classi:
+
+
+```
+class Mammal {
+  constructor (name) {
+    this.name = name
+  }
+  
+  introduceYourself () {
+    console.log(`Hello I am ${this.type} and my name is: ${this.name}`)
+  }
+}
+
+class Cat extends Mammal {
+  constructor (name) {
+    super(name)
+    this.noise = 'meow'
+    this.type = 'cat'
+  }
+
+  meow () {
+    console.log(`I ${this.noise}: MEEEEOOOOW`)
+  }
+}
+
+class Dog extends Mammal {
+  constructor (name) {
+    super(name)
+    this.noise = 'bark'
+    this.type = 'dog'
+  }
+
+  woof () {
+    console.log(`Io ${this.noise}: WOOF WOOF`)
+  }
+}
+
+const fuffy = new Cat('Fuffy')
+fuffy.introduceYourself()
+fuffy.meow()
+
+const bobby = new Dog('Bobby')
+bobby.introduceYourself()
+bobby.woof()
+```
+
+Anche in questo caso la catena di prototipi sarà:
+
+- Il prototipo di **fuffy** è `Cat.prototype`;
+- Il prototipo di **bobby** è `Dog.prototype`;
+- Il prototipo di **Dog** e **Cat** è `Mammal.prototype`;
+- Il prototipo di **Mammal** è `Object.prototype`.
+
+La parola chiave `extends` rende l’ereditarietà prototipale molto più semplice. Nel codice di esempio, la classe `Dog extends Mammal` assicurerà che il prototipo di `Dog.prototype` sarà `Mammal.prototype`. In altre parole equivale alla seguente sintassi utilizzata negli esempi precedenti:
+
+```
+Object.setPrototypeOf(Dog.prototype, Mammal.prototype)
+```
+
+La parola chiave `super` nel metodo del `constructor` della classe `Dog` è un modo generico per chiamare il costruttore della classe genitore impostando this sull’istanza corrente. Nell’esempio della funzione costruttore equivale a:
+
+
+```
+function Dog (name) {
+  ...
+  Mammal.call(this, name)
+}
+```
