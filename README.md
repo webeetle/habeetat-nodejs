@@ -6,11 +6,10 @@
 
 ## Ciao
 
-Il motivo per cui ho deciso di creare questa applicazione Next.js è quello di condividere la mia conoscenza su Node.js in modo totalmente libero.
-Possono esserci degli errori, e sicuramente ce ne sono, quindi se li trovi o se qualcosa ti risulta poco chiaro, ti prego di sottomettere una PULL REQUEST 🙏.
+Il motivo per cui ho deciso di creare questa applicazione Next.js è quello di condividere alcune nozioni su Node.js in modo totalmente libero.
+Possono esserci degli errori, e sicuramente ne troverai, quindi se li trovi o se qualcosa ti risulta poco chiaro, 
+ti prego di sottomettere una PULL REQUEST 🙏.
 
-Sai come creare siti e app nel browser con JavaScript? O forse hai esperienza con un linguaggio come Python, PHP o Ruby.
-Indipendentemente da ciò, questo è il corso per chiunque voglia iniziare rapidamente con Node.js. 
 Alcuni argomenti che tratteremo in questo corso includono:
 
 * 😱 Introduzione a Node.js
@@ -53,4 +52,4 @@ Tutti gli argomenti trattati e suddivisi per lezione puoi trovarli nella directo
 
 ## Licenza
 
-[Creative Commons Legal Code](./LICENSE).
+[MIT](./LICENSE).
