@@ -33,7 +33,7 @@ ul li::before {
   width: 12px;
   height: 12px;
   position: absolute;
-  background-image: url('../public/node_logo.png');
+  background-image: url('/node_logo.png');
   background-size: cover;
   background-position: center;
   left: 0;

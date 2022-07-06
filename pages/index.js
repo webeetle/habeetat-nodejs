@@ -25,7 +25,7 @@ const Home = ({ lessons }) => (
           </div>
         </div>
         <div>
-          <img alt="Habeetat Student" src="/images/student.png" />
+          <img alt="Habeetat Student" src="/images/student.png" className='w-96' />
         </div>
       </div>
     </div>
