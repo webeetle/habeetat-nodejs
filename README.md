@@ -7,8 +7,8 @@
 ## Ciao
 
 Il motivo per cui ho deciso di creare questa applicazione Next.js è quello di condividere alcune nozioni su Node.js in modo totalmente libero.
-Possono esserci degli errori, e sicuramente ne troverai, quindi se li trovi o se qualcosa ti risulta poco chiaro, 
-ti prego di sottomettere una PULL REQUEST 🙏.
+Possono esserci degli errori, e sicuramente ne troverai, quindi se li trovi o se qualcosa ti risulta poco chiaro o se vuoi proporre nuovi argomenti, 
+ti prego di sottomettere una [PULL REQUEST](https://github.com/davidedantonio/habeetat-nodejs/issues) 🙏.
 
 Alcuni argomenti che tratteremo in questo corso includono:
 
