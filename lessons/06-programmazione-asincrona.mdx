@@ -491,7 +491,7 @@ Nel caso in cui la callback di del metodo `readFile` restituisce un errore, invo
 `err` della callback. Nel caso in cui non si verifica nessun errore, invochiamo la funzione `resolve` con il contenuto del nostro file.
 
 Ora, immaginando che nella directory corrente sia presente un file il cui contenuto è la stringa _"Hello, from the future!"_, 
-non c'è da meravigliarsi se sul terminale verra stampato il seguente messaggio:
+non c'è da meravigliarsi se sul terminale verrà stampato il seguente messaggio:
 
 ```
 Hello, from the future!
@@ -578,7 +578,7 @@ readFile(bigFile, (err, contents) => {
 ```
 
 Vediamo ora come possiamo trasformare questa implementazione utilizzando le promises. In precedenza abbiamo affermato che se 
-`then` restituisce un valore allora quel valore sarà a una promise. Quindi possiamo creare una catena di prototipi dove propagiamo la 
+`then` restituisce un valore allora quel valore sarà a una promise. Quindi possiamo creare una catena di prototipi dove propaghiamo la 
 lettura del file successivo al `then` successivo:
 
 ```
